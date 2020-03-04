@@ -1,0 +1,17 @@
+package csc426.ast;
+
+public enum Op {
+	LESS,
+	EQUAL,
+	GREATER,
+	NOTEQUAL,
+	LESSEQUAL,
+	GREATEREQUAL,
+	ADD,
+	SUBTRACT,
+	MULTIPLY,
+	DIVIDE,
+	MOD,
+	AND,
+	OR
+}
