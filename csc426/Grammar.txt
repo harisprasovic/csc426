@@ -1,0 +1,65 @@
+REFACTORED BASIC SUBSET GRAMMAR
+-------------------------------
+
+Program --> EOF                              FIRST = EOF
+          | Line Program                     FIRST = NUM
+          
+Line --> NUM Commands EOL
+
+Commands --> Command CommandsRest            FIRST = END, LET, GOTO, GOSUB, RETURN, FOR, NEXT, PRINT, INPUT
+           | IF Expr THEN Commands           FIRST = IF
+           
+CommandsRest --> ε                           FOLLOW = EOL
+               | COLON Commands              FIRST = COLON
+               
+Command --> END                              FIRST = END
+          | LET ID EQ Expr                   FIRST = LET
+          | GOTO NUM                         FIRST = GOTO
+          | GOSUB NUM                        FIRST = GOSUB
+          | RETURN                           FIRST = RETURN
+          | FOR ID EQ Expr TO Expr           FIRST = FOR
+          | NEXT                             FIRST = NEXT
+          | PRINT Exprs                      FIRST = PRINT
+          | INPUT ID                         FIRST = INPUT
+          
+Exprs --> Expr ExprsRest
+
+ExprsRest --> ε                              FOLLOW = EOL, COLON
+            | COMMA Exprs                    FIRST = COMMA
+            
+Expr --> AExpr ExprRest
+
+ExprRest --> ε                               FOLLOW = COMMA, EOL, COLON, RPAR, TO, THEN
+           | RelOp AExpr                     FIRST = EQ, LT, GT
+           
+AExpr --> MExpr AExprRest
+
+AExprRest --> AddOp MExpr AExprRest          FIRST = PLUS, MINUS
+            | ε                              FOLLOW = COMMA, EOL, COLON, RPAR, TO, THEN, EQ, LT, GT
+
+MExpr --> Factor MExprRest
+
+MExprRest --> MulOp Factor MExprRest         FIRST = STAR, SLASH
+            | ε                              FOLLOW = PLUS, MINUS, COMMA, EOL, COLON, RPAR, TO, THEN, EQ, LT, GT
+        
+Factor --> NUM                               FIRST = NUM
+         | ID                                FIRST = ID
+         | AddOp Factor                      FIRST = PLUS, MINUS
+         | LPAR Expr RPAR                    FIRST = LPAR
+         
+RelOp --> EQ                                 FIRST = EQ
+        | LT LTRest                          FIRST = LT
+        | GT GTRest                          FIRST = GT
+        
+LTRest --> ε                                 FOLLOW = NUM, ID, PLUS, MINUS, LPAR
+         | GT                                FIRST = GT
+         | EQ                                FIRST = EQ
+         
+GTRest --> ε                                 FOLLOW = NUM, ID, PLUS, MINUS, LPAR
+         | EQ                                FIRST = EQ
+         
+AddOp --> PLUS                               FIRST = PLUS
+        | MINUS                              FIRST = MINUS
+        
+MulOp --> STAR                               FIRST = STAR
+        | SLASH                              FIRST = SLASH
